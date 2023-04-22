@@ -1,16 +1,18 @@
+import { StyledButtonSmall, StyledItem, StyledSpan } from "../Style/styled";
+
 const Item = ({ story }) => {
   return (
-    <li>
-      <span style={{ width: "40%" }}>
+    <StyledItem>
+      <StyledSpan width="40%">
         <a href={story.url}>{story.title}</a>
-      </span>
-      <span style={{ width: "30%" }}>{story.author}</span>
-      <span style={{ width: "10%" }}>{story.num_comments}</span>
-      <span style={{ width: "10%" }}>{story.points}</span>
-      <span style={{ width: "10%" }}>
-        <button type="button">Dismiss</button>
-      </span>
-    </li>
+      </StyledSpan>
+      <StyledSpan width="30%">{story.author}</StyledSpan>
+      <StyledSpan width="10%">{story.num_comments}</StyledSpan>
+      <StyledSpan width="10%">{story.points}</StyledSpan>
+      <StyledSpan width="10%">
+        <StyledButtonSmall type="button">Dismiss</StyledButtonSmall>
+      </StyledSpan>
+    </StyledItem>
   );
 };
 export default Item;
