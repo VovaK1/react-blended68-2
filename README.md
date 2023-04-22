@@ -1,1 +1,1 @@
-# react-blended68-2
+# Blended practice (react)
