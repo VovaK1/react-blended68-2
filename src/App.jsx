@@ -1,4 +1,5 @@
 import React from "react";
+import { Component } from "react";
 import reactLogo from "./assets/react.svg";
 import SearchForm from "./Components/SearchForm/SearchForm";
 import List from "./Components/List/List";
@@ -23,19 +24,31 @@ const stories = [
   },
 ];
 
-function App() {
-  return (
-    <StyledWrap>
-      <div>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-        <StyledTitle>Hacker Stories</StyledTitle>
-      </div>
-      <SearchForm />
-      <List stories={stories} />
-    </StyledWrap>
-  );
+export class App extends Component {
+  state = {
+    searchTerm: "",
+  };
+  handleSearch = (value) => {
+    this.setState({ searchTerm: value });
+  };
+  render() {
+    console.log(this.state.searchTerm);
+    return (
+      <StyledWrap>
+        <div>
+          <a href="https://reactjs.org" target="_blank">
+            <img src={reactLogo} className="logo react" alt="React logo" />
+          </a>
+          <StyledTitle>Hacker Stories</StyledTitle>
+        </div>
+        <SearchForm
+          handleSearch={this.handleSearch}
+          searchTerm={this.state.searchTerm}
+        />
+        <List stories={stories} />
+      </StyledWrap>
+    );
+  }
 }
 
 export default App;
