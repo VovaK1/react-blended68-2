@@ -32,7 +32,6 @@ export class App extends Component {
     this.setState({ searchTerm: value });
   };
   render() {
-    console.log(this.state.searchTerm);
     return (
       <StyledWrap>
         <div>
