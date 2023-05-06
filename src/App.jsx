@@ -4,49 +4,54 @@ import reactLogo from "./assets/react.svg";
 import SearchForm from "./Components/SearchForm/SearchForm";
 import List from "./Components/List/List";
 import { StyledTitle, StyledWrap } from "./Components/Style/styled";
-
-const InitialStories = [
-  {
-    title: "React",
-    url: "https://reactjs.org/",
-    author: "Jordan Walke",
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: "Redux",
-    url: "https://redux.js.org/",
-    author: "Dan Abramov, Andrew Clark",
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
-``;
+import { fetchStories } from "./services/api";
+import { debounce } from "lodash";
 
 export class App extends Component {
   state = {
     searchTerm: "",
-    stories: InitialStories,
+    stories: [],
+    isLoading: false,
+    isError: false,
   };
+
+  fetchData = async () => {
+    try {
+      this.setState({ isLoading: true });
+      const data = await fetchStories(this.state.searchTerm);
+      // console.log(data);
+      this.setState({ stories: data });
+    } catch (error) {
+      this.setState({ isError: true });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
+  debounceFetch = debounce(this.fetchData, 1000);
 
   componentDidMount() {
     const searchTerm = localStorage.getItem("searchTerm") || "";
     this.setState({ searchTerm });
+    this.fetchData();
   }
   componentDidUpdate(prevProps, prevState) {
     localStorage.setItem("searchTerm", this.state.searchTerm);
+    if (prevState.searchTerm !== this.state.searchTerm) {
+      this.debounceFetch();
+    }
   }
+
   handleSearch = (value) => {
     this.setState({ searchTerm: value });
   };
 
-  fiteredStories = () => {
-    return this.state.stories.filter((story) =>
-      story.title.toLowerCase().includes(this.state.searchTerm.toLowerCase())
-    );
-  };
+  // fiteredStories = () => {
+  //   return this.state.stories.filter(
+  //     (story) =>
+  //       story.title &&
+  //       story.title.toLowerCase().includes(this.state.searchTerm.toLowerCase())
+  //   );
+  // };
 
   handleRemoveStory = (id) => {
     const newStories = this.state.stories.filter(
@@ -68,8 +73,10 @@ export class App extends Component {
           handleSearch={this.handleSearch}
           searchTerm={this.state.searchTerm}
         />
+        {this.state.isLoading && <p>Loading..</p>}
+        {this.state.isError && <p>Something went wrong</p>}
         <List
-          stories={this.fiteredStories()}
+          stories={this.state.stories}
           handleRemoveStory={this.handleRemoveStory}
         />
       </StyledWrap>
