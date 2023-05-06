@@ -5,7 +5,7 @@ import SearchForm from "./Components/SearchForm/SearchForm";
 import List from "./Components/List/List";
 import { StyledTitle, StyledWrap } from "./Components/Style/styled";
 
-const stories = [
+const InitialStories = [
   {
     title: "React",
     url: "https://reactjs.org/",
@@ -23,14 +23,30 @@ const stories = [
     objectID: 1,
   },
 ];
+``;
 
 export class App extends Component {
   state = {
     searchTerm: "",
+    stories: InitialStories,
   };
   handleSearch = (value) => {
     this.setState({ searchTerm: value });
   };
+
+  fiteredStories = () => {
+    return this.state.stories.filter((story) =>
+      story.title.toLowerCase().includes(this.state.searchTerm.toLowerCase())
+    );
+  };
+
+  handleRemoveStory = (id) => {
+    const newStories = this.state.stories.filter(
+      (story) => story.objectID !== id
+    );
+    this.setState({ stories: newStories });
+  };
+
   render() {
     return (
       <StyledWrap>
@@ -44,7 +60,10 @@ export class App extends Component {
           handleSearch={this.handleSearch}
           searchTerm={this.state.searchTerm}
         />
-        <List stories={stories} />
+        <List
+          stories={this.fiteredStories()}
+          handleRemoveStory={this.handleRemoveStory}
+        />
       </StyledWrap>
     );
   }

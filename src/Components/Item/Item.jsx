@@ -1,6 +1,10 @@
 import { StyledButtonSmall, StyledItem, StyledSpan } from "../Style/styled";
 
-const Item = ({ story }) => {
+const Item = ({ story, handleRemoveStory }) => {
+  const removeStory = () => {
+    handleRemoveStory(story.objectID);
+  };
+
   return (
     <StyledItem>
       <StyledSpan width="40%">
@@ -10,7 +14,9 @@ const Item = ({ story }) => {
       <StyledSpan width="10%">{story.num_comments}</StyledSpan>
       <StyledSpan width="10%">{story.points}</StyledSpan>
       <StyledSpan width="10%">
-        <StyledButtonSmall type="button">Dismiss</StyledButtonSmall>
+        <StyledButtonSmall type="button" onClick={removeStory}>
+          Dismiss
+        </StyledButtonSmall>
       </StyledSpan>
     </StyledItem>
   );
