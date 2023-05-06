@@ -30,6 +30,14 @@ export class App extends Component {
     searchTerm: "",
     stories: InitialStories,
   };
+
+  componentDidMount() {
+    const searchTerm = localStorage.getItem("searchTerm") || "";
+    this.setState({ searchTerm });
+  }
+  componentDidUpdate(prevProps, prevState) {
+    localStorage.setItem("searchTerm", this.state.searchTerm);
+  }
   handleSearch = (value) => {
     this.setState({ searchTerm: value });
   };
