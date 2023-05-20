@@ -6,82 +6,62 @@ import List from "./Components/List/List";
 import { StyledTitle, StyledWrap } from "./Components/Style/styled";
 import { fetchStories } from "./services/api";
 import { debounce } from "lodash";
+import { useState, useEffect } from "react";
 
-export class App extends Component {
-  state = {
-    searchTerm: "",
-    stories: [],
-    isLoading: false,
-    isError: false,
-  };
+const App = () => {
+  const [searchTerm, setSearchTerm] = useState(
+    localStorage.getItem("searchTerm") || ""
+  );
+  const [stories, setStories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  fetchData = async () => {
+  const fetchData = async () => {
     try {
-      this.setState({ isLoading: true });
-      const data = await fetchStories(this.state.searchTerm);
-      // console.log(data);
-      this.setState({ stories: data });
+      setIsLoading(true);
+      const data = await fetchStories(searchTerm);
+      setStories(data);
     } catch (error) {
-      this.setState({ isError: true });
+      setIsError(true);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   };
-  debounceFetch = debounce(this.fetchData, 1000);
 
-  componentDidMount() {
-    const searchTerm = localStorage.getItem("searchTerm") || "";
-    this.setState({ searchTerm });
-    this.fetchData();
-  }
-  componentDidUpdate(prevProps, prevState) {
-    localStorage.setItem("searchTerm", this.state.searchTerm);
-    if (prevState.searchTerm !== this.state.searchTerm) {
-      this.debounceFetch();
-    }
-  }
+  const debounceFetch = debounce(fetchData, 1000);
 
-  handleSearch = (value) => {
-    this.setState({ searchTerm: value });
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("searchTerm", searchTerm);
+    debounceFetch();
+  }, [searchTerm]);
+
+  const handleSearch = (value) => {
+    setSearchTerm(value);
   };
 
-  // fiteredStories = () => {
-  //   return this.state.stories.filter(
-  //     (story) =>
-  //       story.title &&
-  //       story.title.toLowerCase().includes(this.state.searchTerm.toLowerCase())
-  //   );
-  // };
-
-  handleRemoveStory = (id) => {
-    const newStories = this.state.stories.filter(
-      (story) => story.objectID !== id
-    );
-    this.setState({ stories: newStories });
+  const handleRemoveStory = (id) => {
+    const newStories = stories.filter((story) => story.objectID !== id);
+    setStories(newStories);
   };
 
-  render() {
-    return (
-      <StyledWrap>
-        <div>
-          <a href="https://reactjs.org" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
-          <StyledTitle>Hacker Stories</StyledTitle>
-        </div>
-        <SearchForm
-          handleSearch={this.handleSearch}
-          searchTerm={this.state.searchTerm}
-        />
-        {this.state.isLoading && <p>Loading..</p>}
-        {this.state.isError && <p>Something went wrong</p>}
-        <List
-          stories={this.state.stories}
-          handleRemoveStory={this.handleRemoveStory}
-        />
-      </StyledWrap>
-    );
-  }
-}
+  return (
+    <StyledWrap>
+      <div>
+        <a href="https://reactjs.org" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+        <StyledTitle>Hacker Stories</StyledTitle>
+      </div>
+      <SearchForm handleSearch={handleSearch} searchTerm={searchTerm} />
+      {isLoading && <p>Loading..</p>}
+      {isError && <p>Something went wrong</p>}
+      <List stories={stories} handleRemoveStory={handleRemoveStory} />
+    </StyledWrap>
+  );
+};
 
 export default App;
