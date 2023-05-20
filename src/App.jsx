@@ -1,5 +1,4 @@
 import React from "react";
-import { Component } from "react";
 import reactLogo from "./assets/react.svg";
 import SearchForm from "./Components/SearchForm/SearchForm";
 import List from "./Components/List/List";
@@ -7,11 +6,11 @@ import { StyledTitle, StyledWrap } from "./Components/Style/styled";
 import { fetchStories } from "./services/api";
 import { debounce } from "lodash";
 import { useState, useEffect } from "react";
+import useSemiPersistentState from "./Hooks/useSemiPersistentState";
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState(
-    localStorage.getItem("searchTerm") || ""
-  );
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("searchTerm", "");
+
   const [stories, setStories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -35,7 +34,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("searchTerm", searchTerm);
     debounceFetch();
   }, [searchTerm]);
 
