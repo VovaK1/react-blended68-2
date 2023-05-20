@@ -5,16 +5,16 @@ import {
   StyledLabel,
 } from "../Style/styled";
 
-const SearchForm = ({ handleSearch, searchTerm }) => {
+const SearchForm = ({ handleSubmit, inputValue, setInputValue }) => {
   return (
-    <StyledForm>
+    <StyledForm onSubmit={handleSubmit}>
       <StyledLabel htmlFor="search">Search: </StyledLabel>
       <StyledInput
         id="search"
         type="text"
-        value={searchTerm}
+        value={inputValue}
         onChange={(event) => {
-          handleSearch(event.target.value);
+          setInputValue(event.target.value);
         }}
       />
       <StyledButtonLarge type="submit">Submit</StyledButtonLarge>

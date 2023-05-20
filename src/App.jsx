@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import reactLogo from "./assets/react.svg";
 import SearchForm from "./Components/SearchForm/SearchForm";
 import List from "./Components/List/List";
@@ -10,7 +10,7 @@ import useSemiPersistentState from "./Hooks/useSemiPersistentState";
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState("searchTerm", "");
-
+  const [inputValue, setInputValue] = useState("");
   const [stories, setStories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -37,13 +37,14 @@ const App = () => {
     debounceFetch();
   }, [searchTerm]);
 
-  const handleSearch = (value) => {
-    setSearchTerm(value);
-  };
-
-  const handleRemoveStory = (id) => {
+  const handleRemoveStory = useCallback((id) => {
     const newStories = stories.filter((story) => story.objectID !== id);
     setStories(newStories);
+  }, []);
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    setSearchTerm(inputValue);
   };
 
   return (
@@ -54,7 +55,11 @@ const App = () => {
         </a>
         <StyledTitle>Hacker Stories</StyledTitle>
       </div>
-      <SearchForm handleSearch={handleSearch} searchTerm={searchTerm} />
+      <SearchForm
+        handleSubmit={handleSubmit}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+      />
       {isLoading && <p>Loading..</p>}
       {isError && <p>Something went wrong</p>}
       <List stories={stories} handleRemoveStory={handleRemoveStory} />

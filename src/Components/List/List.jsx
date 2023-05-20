@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Item from "../Item/Item";
 
 const List = ({ stories, handleRemoveStory }) => {
@@ -15,4 +16,4 @@ const List = ({ stories, handleRemoveStory }) => {
     </ul>
   );
 };
-export default List;
+export default memo(List);
